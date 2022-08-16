@@ -1,4 +1,5 @@
 import { createApp } from './vendor/vue.esm-browser.js';
+
 createApp({
   data() {
     return {
@@ -35,14 +36,15 @@ createApp({
 
  computed: {
    filteredEmails() {
-    let emailFilter = [];
-    this.emails.forEach(element => {
-      let obj = {email: element, ismarked: false}
-      if (this.search && element.toLowerCase()
-      .includes(this.search.toLowerCase())) {
-        obj.ismarked = true;
-      }
-      emailFilter.push(obj);
+      const emailFilter = this.emails.map(item => {
+        const element = {};
+        element.email = item;
+        if (this.search && item.toLowerCase().includes(this.search.toLowerCase())) {
+          element.ismarked = true;
+        } else {
+            element.ismarked = false;
+        }
+        return element;
     });
     return emailFilter;
     }
