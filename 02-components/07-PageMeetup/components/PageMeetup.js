@@ -28,8 +28,6 @@ export default defineComponent({
     }
   },
 
-  // emits: ['update:meetupId'],
-
   methods: {
     load(value) {
       this.error = null;
@@ -43,23 +41,13 @@ export default defineComponent({
   },
 
   mounted() {
-  //       fetchMeetupById(this.meetupId).then(
-  //         (meetup) => {this.meetup = meetup;
-  //                     }
-  //       );
-    this.load(this.meetupId);
+      this.load(this.meetupId);
     },
 
     watch: {
       meetupId: {
         handler(newValue) {
           this.load(newValue);
-          // fetchMeetupById(newValue).then(
-          //   (meetup) => {this.meetup = meetup;
-          //     this.error = null;
-          //   },
-          //   (error) => {this.error = error.message}
-          // );
         }
        }
      },
