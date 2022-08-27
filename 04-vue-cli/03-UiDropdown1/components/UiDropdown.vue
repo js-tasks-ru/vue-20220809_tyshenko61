@@ -1,30 +1,69 @@
 <template>
-  <div class="dropdown dropdown_opened">
-    <button type="button" class="dropdown__toggle dropdown__toggle_icon">
-      <ui-icon icon="tv" class="dropdown__icon" />
-      <span>Title</span>
+  <div class="dropdown" :class="{ dropdown_opened: isOpen }">
+    <button
+      type="button"
+      class="dropdown__toggle"
+      :class="{ dropdown__toggle_icon: haveIcon }"
+      @click="isOpen = !isOpen"
+    >
+      <ui-icon v-if="selectedItem?.icon" :icon="selectedItem.icon" class="dropdown__icon" />
+      <span> {{ selectedItem ? selectedItem.text : title }} </span>
     </button>
-
-    <div class="dropdown__menu" role="listbox">
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 1
-      </button>
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 2
+    <div v-show="isOpen" class="dropdown__menu" role="listbox">
+      <button
+        v-for="item in options"
+        class="dropdown__item"
+        :class="{ dropdown__item_icon: haveIcon }"
+        role="option"
+        type="button"
+        @click="selectItem(item)"
+      >
+        <ui-icon v-if="item.icon" :icon="item.icon" class="dropdown__icon" />
+        {{ item.text }}
       </button>
     </div>
   </div>
 </template>
-
 <script>
 import UiIcon from './UiIcon';
-
 export default {
   name: 'UiDropdown',
-
   components: { UiIcon },
+  props: {
+    options: {
+      type: Array,
+      required: true,
+    },
+    modelValue: {
+      type: String,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+  },
+
+  data() {
+    return {
+      isOpen: false,
+    };
+  },
+
+  computed: {
+    selectedItem() {
+      return this.options.find((item) => item.value === this.modelValue);
+    },
+    haveIcon() {
+      return this.options.filter((item) => item.icon !== undefined).length;
+    },
+  },
+
+  methods: {
+    selectItem(item) {
+      this.$emit('update:modelValue', item.value);
+      this.isOpen = false;
+    },
+  },
 };
 </script>
 
