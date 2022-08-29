@@ -14,9 +14,9 @@
           </div>
         </ui-form-group>
         <div class="form__buttons">
-          <button type="submit" class="button button_primary button_block">Войти</button>
+          <button type="submit" class="button button_primary button_block" @submit.prevent="handleSubmit()">Войти</button>
         </div>
-        <div class="form__append">Нет аккаунта? <a href="/register" class="link">Зарегистрируйтесь</a></div>
+        <div class="form__append">Нет аккаунта? <RouterLink to="/register" class="link">Зарегистрируйтесь</RouterLink></div>
       </form>
     </ui-container>
   </div>
@@ -37,6 +37,7 @@ export default {
   methods: {
     handleSubmit() {
       // Требуется обработать сабмит формы
+      this.$router.push(this.$route.query.from?this.$route.query.from:"/");
     },
   },
 };

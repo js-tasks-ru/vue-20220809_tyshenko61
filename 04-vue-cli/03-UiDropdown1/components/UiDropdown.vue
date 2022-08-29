@@ -54,7 +54,7 @@ export default {
       return this.options.find((item) => item.value === this.modelValue);
     },
     haveIcon() {
-      return this.options.filter((item) => item.icon !== undefined).length;
+      return this.options.some((item) => item.icon);
     },
   },
 
