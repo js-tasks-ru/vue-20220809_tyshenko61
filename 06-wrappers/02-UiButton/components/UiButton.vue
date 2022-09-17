@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" class="button" :class="additionalClases" :type="buttonType">
+  <component :is="tag" class="button" :class="[classVariant, {button_block: block}]" :type="buttonType">
     <slot />
   </component>
 </template>
@@ -24,13 +24,10 @@ export default {
   },
 
   computed: {
-    additionalClases() {
-      let classes = "button_" + this.variant;
-      if (this.block) {
-        classes += " button_block";
-      }
-      return classes;
+    classVariant() {
+      return `button_${this.variant}`;
     },
+
     buttonType() {
       if (this.tag==='button' && !this.$attrs?.type)  {
         return 'button';
