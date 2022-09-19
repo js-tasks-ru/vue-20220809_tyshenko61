@@ -34,6 +34,7 @@ export default {
   methods: {
     handleSendSubmit() {
       this.send();
+      this.scroll();
     },
 
     send() {
@@ -42,6 +43,13 @@ export default {
         text: this.newMessage,
       });
       this.newMessage = '';
+    },
+
+    scroll() {
+      this.$nextTick(() => {
+        const currentElement = this.$refs.items[this.$refs.items.length - 1];
+        currentElement.scrollIntoView({ behavior: 'smooth'});
+      });
     },
   },
 };
