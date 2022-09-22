@@ -1,32 +1,30 @@
 <template>
   <fieldset class="agenda-item-form">
-    <button type="button" class="agenda-item-form__remove-button">
+    <button type="button" class="agenda-item-form__remove-button" @click="$emit('remove')">
       <ui-icon icon="trash" />
     </button>
 
     <ui-form-group>
-      <ui-dropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
+      <ui-dropdown v-model="localAgendaItem.type" title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
     </ui-form-group>
 
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <ui-form-group label="Начало">
-          <ui-input type="time" placeholder="00:00" name="startsAt" />
+          <ui-input v-model="localAgendaItem.startsAt" type="time" placeholder="00:00" name="startsAt" @input="handleStart" />
         </ui-form-group>
       </div>
       <div class="agenda-item-form__col">
         <ui-form-group label="Окончание">
-          <ui-input type="time" placeholder="00:00" name="endsAt" />
+          <ui-input v-model="localAgendaItem.endsAt" type="time" placeholder="00:00" name="endsAt" />
         </ui-form-group>
       </div>
     </div>
 
-    <ui-form-group label="Заголовок">
-      <ui-input name="title" />
+    <ui-form-group v-for="(obj, field) in typeAgenda" :key="field" :label="obj.label">
+      <component :is="obj.component" v-model="localAgendaItem[field]" v-bind="obj.props" />
     </ui-form-group>
-    <ui-form-group label="Описание">
-      <ui-input multiline name="description" />
-    </ui-form-group>
+
   </fieldset>
 </template>
 
@@ -165,6 +163,55 @@ export default {
       required: true,
     },
   },
+
+data() {
+    return {
+      localAgendaItem: { ...this.agendaItem },
+    };
+  },
+
+  emits: ['remove', 'update:agendaItem'],
+
+  watch: {
+    localAgendaItem: {
+      deep: true,
+      handler() {
+        this.$emit('update:agendaItem', { ...this.localAgendaItem });
+      },
+    },
+  },
+
+  methods: {
+
+    timeMinutes(timestring) {
+      return parseInt(timestring.slice(0,2)) * 60 + parseInt(timestring.slice(-2));
+    },
+
+    timeMinutesToStr(minutes) {
+      const h = Math.floor(minutes / 60) % 24;
+      const m = minutes % 60
+      return ((h < 10)? `0${h}` : `${h}`) + ":" + ((m < 10)? `0${m}` :`${m}`);
+    },
+    handleStart($event) {
+      const newStart = $event.target.value;
+      const newStartMin = this.timeMinutes(newStart);
+      const startsAtMin = this.timeMinutes(this.localAgendaItem.startsAt);
+      const endsAtMin = this.timeMinutes(this.localAgendaItem.endsAt);
+      let diff = endsAtMin - startsAtMin;
+      if (diff < 0) {
+        diff += 24 * 60;
+      }
+      const newEnd = newStartMin + diff;
+      this.localAgendaItem.endsAt = this.timeMinutesToStr(newEnd);
+    },
+  },
+
+  computed: {
+    typeAgenda() {
+      return agendaItemFormSchemas[this.localAgendaItem.type];
+    },
+  },
+
 };
 </script>
 
